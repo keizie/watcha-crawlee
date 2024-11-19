@@ -4,7 +4,7 @@ import { config } from "dotenv";
 import { router } from "./routes.js";
 
 config();
-const startUrls = process.env.URLS?.split(" ") ?? [];
+const startUrl = process.env.MYPAGE_URL;
 
 const crawler = new PlaywrightCrawler({
   headless: process.env.HEADFUL ? false : true,
@@ -20,6 +20,7 @@ const crawler = new PlaywrightCrawler({
       await blockRequests({
         urlPatterns: [
           "www.googletagmanager.com",
+          "apis.google.com",
           "sentry.io",
           "/clipboard.min.js",
           "/api/users/me",
@@ -27,6 +28,7 @@ const crawler = new PlaywrightCrawler({
           "/api/legals",
           "/api/home/bottom_pop_up",
           "/api/sessions/region",
+          "/sign_in",
         ],
       });
     },
@@ -65,11 +67,11 @@ const crawler = new PlaywrightCrawler({
   requestHandler: router,
 });
 
-await crawler.addRequests(
-  startUrls.map((url) => ({
-    url,
-    label: "comment-listing",
-  }))
-);
+await crawler.addRequests([
+  {
+    url: startUrl,
+    label: "mypage",
+  },
+]);
 
 await crawler.run();
